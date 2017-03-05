@@ -18,7 +18,7 @@ st.substring('issi')
 
 >>> True
 
-st.substring('sipi')
+st.substring('pipi')
 
 >>> False
 ```

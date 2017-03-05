@@ -17,6 +17,28 @@ class SuffixTree:
 		self._construct_suffix_tree()
 		self._set_suffix_index_by_dfs(self.root, labelLength=0)
 
+	def substring(self, string):
+		i = j = 0
+		nextNode = self.root
+		currentEdge = ''
+		
+		while i < len(string):
+			if j == len(currentEdge):
+				if nextNode.has_outgoing_edge_starting_with(character=string[i]):
+					nextNode = nextNode.get_child(edge=string[i])
+					currentEdge = self.string[nextNode.get_start_position():nextNode.get_end_position()+1]
+					j = 0
+				else:
+					return False
+
+			if string[i] == currentEdge[j]:
+				i += 1
+				j += 1
+			else:
+				return False
+
+		return True
+
 	def print_edges(self):
 		self._print_edges_helper(self.root)
 
@@ -178,6 +200,8 @@ class RemainingSuffixCount(GlobalIntValue):
 
 if __name__ == '__main__':
 	# st = SuffixTree('abcabxabcd')
-	st = SuffixTree('ATAAATG')
+	# st = SuffixTree('ATAAATG')
+	st = SuffixTree('mississipi')
 	st.print_edges()
+	print(st.substring('issi'))
 
