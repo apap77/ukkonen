@@ -1,50 +1,5 @@
 from SuffixTreeNode import SuffixTreeNode
 
-def singleton(class_):
-	'''http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python'''
-	instances = {}
-	def getinstance(*args, **kwargs):
-		if class_ not in instances:
-			instances[class_] = class_(*args, **kwargs)
-		return instances[class_]
-	return getinstance
-
-class GlobalIntValue:
-	def __init__(self):
-		self.value = 0
-
-	def __str__(self):
-		return str(self.value)
-
-	def __add__(self, other):
-		return self.value + other
-
-	def __radd__(self, other):
-		return self.value + other
-
-	def __sub__(self, other):
-		return self.value - other
-
-	def __rsub__(self, other):
-		return other - self.value
-
-	def decrement(self):
-		self.value -= 1
-
-	def increment(self):
-		self.value += 1
-
-@singleton
-class EndValue(GlobalIntValue):
-	def __init__(self):
-		self.value = -1
-
-@singleton
-class RemainingSuffixCount(GlobalIntValue):
-	def __iter__(self):
-		for i in range(self.value):
-			yield i
-
 class SuffixTree:
 	def __init__(self, string):
 		self.root = SuffixTreeNode(start=-1, end=-1, suffixLink=None)
@@ -62,23 +17,31 @@ class SuffixTree:
 		self._construct_suffix_tree()
 		self._set_suffix_index_by_dfs(self.root, labelLength=0)
 
+	def print_edges(self):
+		self._print_edges_helper(self.root)
+
+	def _print_edges_helper(self, node):
+		for child in node.get_children():
+			print(self.string[child.get_start_position():child.get_end_position()+1])
+			self._print_edges_helper(child)
+
 	def _construct_suffix_tree(self):
 		for position, character in enumerate(self.string):
-			# Rule 1 applied
 			self.END.increment()
 			self.REMAINING_SUFFIX_COUNT.increment()
 
-			for _ in self.REMAINING_SUFFIX_COUNT:
+			while self.REMAINING_SUFFIX_COUNT > 0:
 				if self.activeLength == 0:
 					self._active_point_change_for_active_length_zero(position)
 
 				activeEdgeCharacter = self.string[self.activeEdge]
 
 				if self.activeNode.has_outgoing_edge_starting_with(activeEdgeCharacter):
-					self._active_point_change_for_walk_down(currNode=self.activeNode.get_child(activeEdgeCharacter))
-					activeEdgeCharacter = self.string[self.activeEdge]
+					walkDownDone = self._active_point_change_for_walk_down(currNode=self.activeNode.get_child(activeEdgeCharacter))
+					if walkDownDone:
+						continue
 
-					nextCharacterIndex = self.activeNode.get_character_index_on_edge(edge=activeEdgeCharacter, distance=self.activeLength)
+					nextCharacterIndex = self.activeNode.get_character_index_on_edge(edge=activeEdgeCharacter, distance=self.activeLength+1)
 					nextCharacter = self.string[nextCharacterIndex]
 					
 					if nextCharacter == character:
@@ -102,13 +65,13 @@ class SuffixTree:
 
 				self.REMAINING_SUFFIX_COUNT.decrement()
 
-				if self.activeNode == self.root and self.activeLength > 0:
+				if self.activeNode.is_root() and self.activeLength > 0:
 					self._active_point_change_for_extension_rule_2_case_1(position)
-				elif self.activeNode != self.root:
+				elif not self.activeNode.is_root():
 					self._active_point_change_for_extension_rule_2_case_2()
 
 	def _split(self, activeEdgeCharacter, character, position):
-		splitEndIndex = self.activeNode.get_character_index_on_edge(edge=activeEdgeCharacter, distance=self.activeLength-1)
+		splitEndIndex = self.activeNode.get_character_index_on_edge(edge=activeEdgeCharacter, distance=self.activeLength)
 		nextNode = self.activeNode.get_child(edge=activeEdgeCharacter)
 
 		# Note that suffix link of an internal node is initially set to the root
@@ -136,19 +99,17 @@ class SuffixTree:
 		if self.activeLength < currNode.get_edge_length():
 			return False  # we don't need walk down
 
-		while self.activeLength >= currNode.get_edge_length():
-			self.activeEdge += currNode.get_edge_length()
-			self.activeLength -= currNode.get_edge_length()
-			self.activeNode = currNode
-
+		self.activeEdge += currNode.get_edge_length()
+		self.activeLength -= currNode.get_edge_length()
+		self.activeNode = currNode
 		return True
 
 	def _active_point_change_for_active_length_zero(self, position):
 		self.activeEdge = position
 
-	def _active_point_change_for_extension_rule_2_case_1(self, i):
+	def _active_point_change_for_extension_rule_2_case_1(self, position):
 		self.activeLength -= 1
-		self.activeEdge = i - self.REMAINING_SUFFIX_COUNT + 1
+		self.activeEdge = position - self.REMAINING_SUFFIX_COUNT + 1
 
 	def _active_point_change_for_extension_rule_2_case_2(self):
 		self.activeNode = self.activeNode.follow_suffix_link()
@@ -162,6 +123,61 @@ class SuffixTree:
 				newLabelLength = labelLength + child.get_edge_length()
 				self._set_suffix_index_by_dfs(node=child, labelLength=newLabelLength)
 
+
+def singleton(class_):
+	'''http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python'''
+	instances = {}
+	def getinstance(*args, **kwargs):
+		if class_ not in instances:
+			instances[class_] = class_(*args, **kwargs)
+		return instances[class_]
+	return getinstance
+
+
+class GlobalIntValue:
+	def __init__(self):
+		self.value = 0
+
+	def __str__(self):
+		return str(self.value)
+
+	def __add__(self, other):
+		return self.value + other
+
+	def __radd__(self, other):
+		return self.value + other
+
+	def __sub__(self, other):
+		return self.value - other
+
+	def __rsub__(self, other):
+		return other - self.value
+
+	def __gt__(self, other):
+		return self.value > other
+
+	def decrement(self):
+		self.value -= 1
+
+	def increment(self):
+		self.value += 1
+
+
+@singleton
+class EndValue(GlobalIntValue):
+	def __init__(self):
+		self.value = -1
+
+
+@singleton
+class RemainingSuffixCount(GlobalIntValue):
+	def __iter__(self):
+		for i in range(self.value):
+			yield i
+
+
 if __name__ == '__main__':
-	st = SuffixTree('abcabxabcd')
+	# st = SuffixTree('abcabxabcd')
+	st = SuffixTree('ATAAATG')
+	st.print_edges()
 

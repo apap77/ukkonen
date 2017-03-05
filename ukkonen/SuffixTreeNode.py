@@ -1,9 +1,9 @@
 class SuffixTreeNode:
 	def __init__(self, start=None, end=None, suffixLink=None):
 		self.children = dict()
-		self.suffixLink = None
 		self.start = start
 		self.end = end
+		self.suffixLink = suffixLink
 		self.suffixIndex = -1
 
 	def has_outgoing_edge_starting_with(self, character):
@@ -35,7 +35,7 @@ class SuffixTreeNode:
 		self.start = newStart
 
 	def get_character_index_on_edge(self, edge, distance):
-		return self.children[edge].get_start_position() + distance
+		return self.children[edge].get_start_position() + distance - 1
 
 	def set_suffix_link_to(self, targetNode):
 		self.suffixLink = targetNode
