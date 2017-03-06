@@ -32,6 +32,9 @@ class SuffixTreeNode:
 	def get_children(self):
 		return self.children.values()
 
+	def get_children_lexicographically(self):
+		return [value for key, value in sorted(self.children.items(), key=lambda x: x[0])]
+
 	def set_start_position(self, newStart):
 		self.start = newStart
 

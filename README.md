@@ -39,7 +39,7 @@ st.search('pipi')
 
 ### SuffixTree.longest_repeated_substring(*k=2*)
 
-Finds the longest repeated substring among the substrings that appears in the given string at least *k* times. If there exist more than one longest repeated substrings, then it just returns one of them.
+Finds the longest repeated substring among the substrings that appear in the given string at least *k* times. If there exist more than one longest repeated substrings, then it just returns one of them.
 
 ```python
 st.longest_repeated_substring()
@@ -49,4 +49,13 @@ st.longest_repeated_substring()
 st.longest_repeated_substring(k=3)
 
 >>> 's'
+```
+
+### SuffixTree.suffix_array()
+Gives suffix array of the string in O(n) time, where n is the length of the string. Suffix array is an array of suffix indices(i.e. the starting index of each suffix) which is sorted by the lexicographic order of suffixes. In the example  below, suffix index 10 represents a suffix 'i', 7 represents suffix 'ippi', 4 represents suffix 'issippi', ..., and so on. You can easily notice that those suffixes are lexicographically sorted.
+
+```python
+st.suffix_array()
+
+>>> [10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2]
 ```

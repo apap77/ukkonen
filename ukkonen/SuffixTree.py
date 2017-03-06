@@ -33,6 +33,18 @@ class SuffixTree:
 
 		return maxSubstring
 
+	def suffix_array(self):
+		indices = []
+		self._get_suffix_indices_by_lexicographical_dfs(self.root, indices)
+		return indices[1:]
+
+	def _get_suffix_indices_by_lexicographical_dfs(self, node, indices):
+		if node.is_leaf():
+			indices.append(node.get_suffix_index())
+		else:
+			for child in node.get_children_lexicographically():
+				self._get_suffix_indices_by_lexicographical_dfs(child, indices)
+
 	def _longest_repeated_substring_helper(self, node, k, substringFragments, maxSubstring):
 		if node.get_leaf_count() < k:
 			return substringFragments, maxSubstring
@@ -249,10 +261,8 @@ class RemainingSuffixCount(GlobalIntValue):
 
 if __name__ == '__main__':
 	# st = SuffixTree('abcabxabcd')
-	# st = SuffixTree('ATAAATG')
-	st = SuffixTree('mississipi')
-	st.print_edges()
-	print(st.substring('issi'))
-	print(st.search('issi'))
-	print(st.longest_repeated_substring())
-	print(st.longest_repeated_substring(k=3))
+	# st = SuffixTree('AATCGGGTTCAATCGGGGT')
+	st = SuffixTree('mississippi')
+	# st.print_edges()
+	# print(st.substring('issi'))
+	print(st.suffix_array())
