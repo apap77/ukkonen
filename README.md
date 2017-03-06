@@ -39,7 +39,7 @@ st.search('pipi')
 
 ### SuffixTree.longest_repeated_substring(*k=2*)
 
-Finds a longest repeated substring which appears in the given string at least *k* times. If there exist more than one longest repeated substrings, then it just returns one of them.
+Finds the longest repeated substring among the substrings that appears in the given string at least *k* times. If there exist more than one longest repeated substrings, then it just returns one of them.
 
 ```python
 st.longest_repeated_substring()
