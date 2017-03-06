@@ -9,9 +9,9 @@ This module features basic functionalities of suffix tree. Assume that we initia
 st = SuffixTree('mississippi')
 ```
 
-### SuffixTree.substring(*string*)
+### SuffixTree.substring(*pattern*)
 
-Check if a string *string* is a substring of the given string in O(m) time, where m is the length of *string*.
+Checks if a string *pattern* is a substring of the given string in O(m) time, where m is the length of *string*.
 
 ```python
 st.substring('issi')
@@ -21,4 +21,18 @@ st.substring('issi')
 st.substring('pipi')
 
 >>> False
+```
+
+### SuffixTree.search(*pattern*)
+
+Finds all occurences of *pattern*. A list of indices from which *pattern* starts in  the given string is returned. If *pattern* is not a substring of the given string, empty list is returned.
+
+```python
+st.search('issi')
+
+>>> [1, 4]
+
+st.search('pipi')
+
+>>> []
 ```

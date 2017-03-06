@@ -46,6 +46,9 @@ class SuffixTreeNode:
 	def set_suffix_index(self, suffixIndex):
 		self.suffixIndex = suffixIndex
 
+	def get_suffix_index(self):
+		return self.suffixIndex
+
 	def set_child(self, edge, node):
 		self.children[edge] = node
 

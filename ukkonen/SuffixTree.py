@@ -17,11 +17,36 @@ class SuffixTree:
 		self._construct_suffix_tree()
 		self._set_suffix_index_by_dfs(self.root, labelLength=0)
 
+	def search(self, string):
+		isSubstring, nextNode = self._traverse_against_pattern(string)
+
+		if not isSubstring:
+			return []
+		else:
+			return self._get_leaf_indices_below(nextNode)
+
 	def substring(self, string):
+		return len(self.search(string)) != 0
+
+	def _get_leaf_indices_below(self, node):
+		indices = []
+		self._get_leaf_indices_below_helper(node, indices)
+		return list(sorted(indices))
+
+	def _get_leaf_indices_below_helper(self, node, indices):
+		if node.is_leaf():
+			indices.append(node.get_suffix_index())
+			return
+
+		else:
+			for child in node.get_children():
+				self._get_leaf_indices_below_helper(child, indices)
+
+	def _traverse_against_pattern(self, string):
 		i = j = 0
 		nextNode = self.root
 		currentEdge = ''
-		
+
 		while i < len(string):
 			if j == len(currentEdge):
 				if nextNode.has_outgoing_edge_starting_with(character=string[i]):
@@ -29,15 +54,15 @@ class SuffixTree:
 					currentEdge = self.string[nextNode.get_start_position():nextNode.get_end_position()+1]
 					j = 0
 				else:
-					return False
+					return False, None
 
 			if string[i] == currentEdge[j]:
 				i += 1
 				j += 1
 			else:
-				return False
+				return False, None
 
-		return True
+		return True, nextNode
 
 	def print_edges(self):
 		self._print_edges_helper(self.root)
@@ -204,4 +229,5 @@ if __name__ == '__main__':
 	st = SuffixTree('mississipi')
 	st.print_edges()
 	print(st.substring('issi'))
+	print(st.search('issi'))
 
