@@ -5,6 +5,7 @@ class SuffixTreeNode:
 		self.end = end
 		self.suffixLink = suffixLink
 		self.suffixIndex = -1
+		self.leafCount = 0
 
 	def has_outgoing_edge_starting_with(self, character):
 		return character in self.children
@@ -55,3 +56,9 @@ class SuffixTreeNode:
 	def set_new_child(self, edge, start, end):
 		child = SuffixTreeNode(start, end)
 		self.children[edge] = child
+
+	def set_leaf_count(self, leafCount):
+		self.leafCount = leafCount
+
+	def get_leaf_count(self):
+		return self.leafCount

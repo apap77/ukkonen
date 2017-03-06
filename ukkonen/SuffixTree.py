@@ -28,6 +28,26 @@ class SuffixTree:
 	def substring(self, string):
 		return len(self.search(string)) != 0
 
+	def longest_repeated_substring(self, k=2):
+		_, maxSubstring = self._longest_repeated_substring_helper(self.root, k, [], '')
+
+		return maxSubstring
+
+	def _longest_repeated_substring_helper(self, node, k, substringFragments, maxSubstring):
+		if node.get_leaf_count() < k:
+			return substringFragments, maxSubstring
+		else:
+			substring = ''.join(substringFragments)
+			if len(substring) > len(maxSubstring):
+				maxSubstring = substring
+
+			for child in node.get_children():
+				substringFragments.append(self.string[child.get_start_position():child.get_end_position()+1])
+				substringFragments, maxSubstring = self._longest_repeated_substring_helper(child, k, substringFragments, maxSubstring)
+				substringFragments.pop()
+
+			return substringFragments, maxSubstring
+
 	def _get_leaf_indices_below(self, node):
 		indices = []
 		self._get_leaf_indices_below_helper(node, indices)
@@ -36,7 +56,6 @@ class SuffixTree:
 	def _get_leaf_indices_below_helper(self, node, indices):
 		if node.is_leaf():
 			indices.append(node.get_suffix_index())
-			return
 
 		else:
 			for child in node.get_children():
@@ -164,11 +183,16 @@ class SuffixTree:
 	def _set_suffix_index_by_dfs(self, node, labelLength):
 		if node.is_leaf():
 			node.set_suffix_index(len(self.string) - labelLength)
+			return 1
 
 		else:
+			leafCount = 0
 			for child in node.get_children():
 				newLabelLength = labelLength + child.get_edge_length()
-				self._set_suffix_index_by_dfs(node=child, labelLength=newLabelLength)
+				leafCount += self._set_suffix_index_by_dfs(node=child, labelLength=newLabelLength)
+
+			node.set_leaf_count(leafCount)
+			return leafCount
 
 
 def singleton(class_):
@@ -230,4 +254,5 @@ if __name__ == '__main__':
 	st.print_edges()
 	print(st.substring('issi'))
 	print(st.search('issi'))
-
+	print(st.longest_repeated_substring())
+	print(st.longest_repeated_substring(k=3))
