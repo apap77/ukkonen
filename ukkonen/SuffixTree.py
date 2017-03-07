@@ -36,7 +36,10 @@ class SuffixTree:
 	def suffix_array(self):
 		indices = []
 		self._get_suffix_indices_by_lexicographical_dfs(self.root, indices)
-		return indices[1:]
+		return indices
+
+	def burrows_wheeler_transform(self):
+		return ''.join([self.string[i-1] for i in self.suffix_array()])
 
 	def _get_suffix_indices_by_lexicographical_dfs(self, node, indices):
 		if node.is_leaf():
@@ -262,7 +265,11 @@ class RemainingSuffixCount(GlobalIntValue):
 if __name__ == '__main__':
 	# st = SuffixTree('abcabxabcd')
 	# st = SuffixTree('AATCGGGTTCAATCGGGGT')
-	st = SuffixTree('mississippi')
+	# st = SuffixTree('mississippi')
+	with open('./rosalind_ba9i.txt') as inFile:
+		st = SuffixTree(inFile.readline().strip()[:-1])
 	# st.print_edges()
 	# print(st.substring('issi'))
-	print(st.suffix_array())
+	# print(st.suffix_array())
+
+	print(st.burrows_wheeler_transform())
