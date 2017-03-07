@@ -38,6 +38,43 @@ class SuffixTree:
 		self._get_suffix_indices_by_lexicographical_dfs(self.root, indices)
 		return indices[1:]
 
+	def maximal_repeats(self, minLength):
+		maximalRepeats = []
+		self._maximal_repeats_helper(self.root, minLength, [], maximalRepeats)
+		return maximalRepeats
+
+	def _maximal_repeats_helper(self, node, minLength, substringFragments, maximalRepeats):
+		if node.is_leaf():
+			suffixIndex = node.get_suffix_index()
+
+			if suffixIndex == 0:
+				return True, None
+			else:
+				return False, self.string[suffixIndex - 1]
+
+		else:
+			children = list(node.get_children())
+			substringFragments.append(self.string[children[0].get_start_position():children[0].get_end_position()+1])
+			leftDiverse, leftCharacter = self._maximal_repeats_helper(children[0], minLength, substringFragments, maximalRepeats)
+			substringFragments.pop()
+
+			for child in children[1:]:
+				substringFragments.append(self.string[child.get_start_position():child.get_end_position()+1])
+				childLeftDiverse, childLeftCharacter = self._maximal_repeats_helper(child, minLength, substringFragments, maximalRepeats)
+				substringFragments.pop()
+
+				if childLeftDiverse or (leftCharacter != childLeftCharacter):
+					leftDiverse = True
+
+			if leftDiverse:
+				substring = ''.join(substringFragments)
+				if len(substring) >= minLength:
+					maximalRepeats.append(substring)
+
+				return True, None
+			else:
+				return False, childLeftCharacter
+
 	def _get_suffix_indices_by_lexicographical_dfs(self, node, indices):
 		if node.is_leaf():
 			indices.append(node.get_suffix_index())
@@ -260,9 +297,11 @@ class RemainingSuffixCount(GlobalIntValue):
 
 
 if __name__ == '__main__':
+	
 	# st = SuffixTree('abcabxabcd')
-	# st = SuffixTree('AATCGGGTTCAATCGGGGT')
+	# st = SuffixTree('TAGAGATAGAATGGGTCCAGAGTTTTGTAATTTCCATGGGTCCAGAGTTTTGTAATTTATTATATAGAGATAGAATGGGTCCAGAGTTTTGTAATTTCCATGGGTCCAGAGTTTTGTAATTTAT')
 	st = SuffixTree('mississippi')
 	# st.print_edges()
 	# print(st.substring('issi'))
-	print(st.suffix_array())
+	# print(st.suffix_array())
+	print(st.maximal_repeats(minLength=1))

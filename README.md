@@ -59,3 +59,17 @@ st.suffix_array()
 
 >>> [10, 7, 4, 1, 0, 9, 8, 6, 3, 5, 2]
 ```
+
+### SuffixTree.maximal_repeats(*minLength*)
+
+Gives maximal repeats of the string with length not shorter than *minLength*. A maximal repeat is a repeated substring of the string which has two occurences of it such that the occurences cannot be extended in either direction while they are still identical. See [Wikipedia](https://en.wikipedia.org/wiki/Maximal_pair) for a more formal definition.
+
+```python
+st.maximal_repeats(minLength=1)
+
+>>> ['issi', 'i', 'p', 's']
+
+st.maximal_repeats(minLength=2)
+
+>>> ['issi']
+```
